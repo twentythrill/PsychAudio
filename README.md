@@ -64,3 +64,9 @@ On macOS, pressing the hardware Play/Pause media key often leads to unpredictabl
 
 * **Strictly Local**: The daemon binds its WebSocket server exclusively to `127.0.0.1` on port `49281`. It rejects any non-loopback connections.
 * **No Telemetry**: Neither the native daemon nor the Chrome extension transmits analytics, metrics, or personal data. No external servers or cloud services are involved.
+
+---
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
