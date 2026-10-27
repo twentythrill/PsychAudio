@@ -1,0 +1,39 @@
+# macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Build artifacts & distribution
+dist/
+build/
+*.app/
+*.dSYM/
+*.o
+*.obj
+*.dylib
+*.swiftdoc
+*.swiftmodule
+*.swiftsourceinfo
+
+# Xcode & Swift Package Manager caches
+.build/
+Packages/
+Package.resolved
+DerivedData/
+*.xcuserdata/
+
+# Environment & temporary files
+*.log
+*.tmp
+*.swp
+*~
+.env
+.env.*
+
+# Local agent workspace configuration
+AGENTS.md
+CLAUDE.md
+GEMINI.md
