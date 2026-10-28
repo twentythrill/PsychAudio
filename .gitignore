@@ -9,6 +9,7 @@
 # Build artifacts & distribution
 dist/
 build/
+main
 *.app/
 *.dSYM/
 *.o

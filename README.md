@@ -16,8 +16,18 @@ On macOS, pressing the hardware Play/Pause media key often leads to unpredictabl
 
 **PsychAudio** solves this through a lightweight, two-part architecture:
 
-1. **Native Menu Bar Daemon (Swift)**: Runs as an accessory app in the macOS menu bar. It establishes a low-level HID event tap to intercept and consume hardware Play/Pause key presses before system daemons can guess. It tracks the playback state of Apple Music and active Chrome tabs, deterministically routing the key press to the source that was playing or most recently paused.
+1. **Native Menu Bar Daemon (Swift)**: Runs as an accessory app in the macOS menu bar. It provides universal media control by intercepting both physical keyboard media keys (via low-level HID `CGEventTap`) and external audio peripherals such as Bluetooth headphones, AirPods, and external controllers (via `MPRemoteCommandCenter` and `MPNowPlayingInfoCenter`). A minimal, zero-overhead silent CoreAudio output engine keeps the daemon registered as an eligible media destination without requesting microphone access or showing recording indicators. The daemon tracks playback states between Apple Music and Chrome tabs, deterministically routing play/pause commands to the source that was playing or most recently paused.
 2. **Chrome Extension (Manifest V3)**: Bridges Chrome tab audio states (`audible: true/false`) to the native daemon over a strictly local WebSocket server and executes targeted play/pause toggles inside the active media tab.
+
+---
+
+## Universal Media Control
+
+PsychAudio v1.1.0 provides end-to-end media key arbitration across all input sources:
+
+* **Built-in & External Keyboards**: Intercepts physical Play/Pause hardware keystrokes (`NX_KEYTYPE_PLAY`) at the HID event tap level, consuming the event so macOS system daemons cannot guess the target.
+* **Bluetooth Headphones & AirPods**: Handles AVRCP media commands (single/double stem squeezes, button clicks) through `MediaPlayer.framework`.
+* **Zero Microphone Usage**: Runs a silent output-only audio session. It does not access input devices, never requests microphone permissions, and never displays macOS recording indicators.
 
 ---
 
@@ -41,7 +51,7 @@ On macOS, pressing the hardware Play/Pause media key often leads to unpredictabl
 
 ### 2. Grant macOS Permissions
 
-* **Accessibility**: Required for the low-level HID event tap to intercept hardware media keys.
+* **Accessibility**: Required for the low-level HID event tap to intercept physical keyboard media keys.
   * Open **System Settings > Privacy & Security > Accessibility**.
   * Ensure **PsychAudio** is toggled **ON**.
 * **Automation**: Required for AppleScript to control Apple Music playback.
