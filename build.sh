@@ -59,24 +59,17 @@ codesign --force --deep -s - "${APP_BUNDLE}"
 echo "[5/6] Verifying bundle integrity..."
 codesign --verify --deep --strict "${APP_BUNDLE}"
 
-# 6. Packaging Release Archives
-echo "[6/6] Packaging release archives..."
+# 6. Packaging Release Archive
+echo "[6/6] Packaging release archive..."
 cd "${DIST_DIR}"
 zip -r -y -9 "PsychAudio-v${VERSION}.zip" "${APP_NAME}"
-
-# Also assemble FocusAudioDaemon.app and package FocusAudioDaemon-v1.1.0.zip for full specification compatibility
-cp -R "${APP_NAME}" "FocusAudioDaemon.app"
-codesign --force --deep -s - "FocusAudioDaemon.app"
-zip -r -y -9 "FocusAudioDaemon-v${VERSION}.zip" "FocusAudioDaemon.app"
-rm -rf "FocusAudioDaemon.app"
 
 echo ""
 echo "=== Build Succeeded! ==="
 echo "Application bundle created at:"
 echo "  ${APP_BUNDLE}"
-echo "Release archives created at:"
+echo "Release archive created at:"
 echo "  ${DIST_DIR}/PsychAudio-v${VERSION}.zip"
-echo "  ${DIST_DIR}/FocusAudioDaemon-v${VERSION}.zip"
 echo ""
 echo "You can launch the app directly or copy it to /Applications:"
 echo "  cp -R \"${APP_BUNDLE}\" /Applications/"
