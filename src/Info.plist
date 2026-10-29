@@ -13,9 +13,9 @@
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.1.0</string>
+    <string>1.2.0</string>
     <key>CFBundleVersion</key>
-    <string>1.1.0</string>
+    <string>1.2.0</string>
     <key>CFBundleIconFile</key>
     <string>AppIcon</string>
     <key>LSMinimumSystemVersion</key>
@@ -25,6 +25,6 @@
     <key>NSHighResolutionCapable</key>
     <true/>
     <key>NSAppleEventsUsageDescription</key>
-    <string>PsychAudio requires permission to control Apple Music playback via AppleScript when media keys are pressed.</string>
+    <string>PsychAudio requires permission to control media applications (Apple Music, Spotify, VLC, and IINA) via AppleScript when hardware media keys are pressed.</string>
 </dict>
 </plist>

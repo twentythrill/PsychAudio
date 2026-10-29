@@ -10,7 +10,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let interceptor = MediaKeyInterceptor()
     private let webSocketServer = WebSocketServer()
     private let arbitrator = AudioArbitrator()
-    private let remoteMediaController = RemoteMediaController()
     
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Enforce accessory activation policy so app never shows in Dock
@@ -22,7 +21,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Start background components
         webSocketServer.start()
         interceptor.start()
-        remoteMediaController.start()
     }
     
     func applicationWillTerminate(_ notification: Notification) {
@@ -37,11 +35,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         
         // Wire interceptor callback to arbitrator (hardware keyboard media keys)
         interceptor.onPlayPausePressed = { [weak self] in
-            self?.arbitrator.handleHardwarePlayPausePressed()
-        }
-        
-        // Wire remote media controller (Bluetooth headphones, AirPods, AVRCP controllers)
-        remoteMediaController.onRemotePlayPause = { [weak self] in
             self?.arbitrator.handleHardwarePlayPausePressed()
         }
         
@@ -139,9 +132,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         
         // 2. Shut down local WebSocket listener and terminate connections
         webSocketServer.stop()
-        
-        // 3. Stop remote media controller and release MediaPlayer hooks
-        remoteMediaController.stop()
     }
     
     // MARK: - Fallback Template Vector Icon

@@ -5,29 +5,31 @@
 <h1 align="center">PsychAudio</h1>
 
 <p align="center">
-  Deterministic hardware media key routing for macOS, eliminating play/pause race conditions between Apple Music and Google Chrome.
+  Deterministic hardware media key routing for macOS, eliminating play/pause race conditions between Apple Music, Spotify, VLC, IINA, and Google Chrome.
 </p>
 
 ---
 
 ## Overview
 
-On macOS, pressing the hardware Play/Pause media key often leads to unpredictable behavior: the system daemon (`mediaremoted`) guesses which application should receive the event, frequently triggering Apple Music when a user intends to resume a paused YouTube video or podcast in Google Chrome, or vice versa.
+On macOS, pressing the hardware Play/Pause media key often leads to unpredictable behavior: the system daemon (`mediaremoted`) guesses which application should receive the event, frequently triggering the wrong media player or launching Apple Music when a user intends to resume a paused Spotify track, video in VLC or IINA, or a tab in Google Chrome.
 
-**PsychAudio** solves this through a lightweight, two-part architecture:
+**PsychAudio** solves this through a lightweight, unified architecture:
 
-1. **Native Menu Bar Daemon (Swift)**: Runs as an accessory app in the macOS menu bar. It provides universal media control by intercepting both physical keyboard media keys (via low-level HID `CGEventTap`) and external audio peripherals such as Bluetooth headphones, AirPods, and external controllers (via `MPRemoteCommandCenter` and `MPNowPlayingInfoCenter`). A minimal, zero-overhead silent CoreAudio output engine keeps the daemon registered as an eligible media destination without requesting microphone access or showing recording indicators. The daemon tracks playback states between Apple Music and Chrome tabs, deterministically routing play/pause commands to the source that was playing or most recently paused.
+1. **Native Menu Bar Daemon (Swift)**: Runs as an accessory app in the macOS menu bar. Using a low-level HID event tap (`CGEventTap`), it intercepts and consumes hardware Play/Pause key presses (`NX_KEYTYPE_PLAY`) before macOS daemons can misroute them. It tracks the active and paused playback state across Apple Music, Spotify, VLC, IINA, and Google Chrome tabs, deterministically routing the key press to the source that was playing or most recently paused.
 2. **Chrome Extension (Manifest V3)**: Bridges Chrome tab audio states (`audible: true/false`) to the native daemon over a strictly local WebSocket server and executes targeted play/pause toggles inside the active media tab.
 
 ---
 
-## Universal Media Control
+## Multi-App Support
 
-PsychAudio v1.1.0 provides end-to-end media key arbitration across all input sources:
+PsychAudio v1.2.0 unifies media arbitration across your primary media players:
 
-* **Built-in & External Keyboards**: Intercepts physical Play/Pause hardware keystrokes (`NX_KEYTYPE_PLAY`) at the HID event tap level, consuming the event so macOS system daemons cannot guess the target.
-* **Bluetooth Headphones & AirPods**: Handles AVRCP media commands (single/double stem squeezes, button clicks) through `MediaPlayer.framework`.
-* **Zero Microphone Usage**: Runs a silent output-only audio session. It does not access input devices, never requests microphone permissions, and never displays macOS recording indicators.
+* **Apple Music**: State tracked via `DistributedNotificationCenter` (`com.apple.Music.playerInfo`). Controlled via AppleScript (`tell application "Music" to playpause`).
+* **Spotify**: State tracked via `DistributedNotificationCenter` (`com.spotify.client.PlaybackStateChanged`). Controlled via AppleScript (`tell application "Spotify" to playpause`).
+* **VLC**: Process state and window activity tracked via `NSWorkspace`. Controlled via AppleScript (`tell application "VLC" to play`).
+* **IINA**: Process state and window activity tracked via `NSWorkspace`. Controlled via AppleScript (`tell application "IINA" to playpause`).
+* **Google Chrome**: Tab-level audio emission tracked in real time over local WebSocket (`ws://127.0.0.1:49281`). Injects targeted play/pause toggles directly into the audible or paused tab.
 
 ---
 
@@ -54,8 +56,8 @@ PsychAudio v1.1.0 provides end-to-end media key arbitration across all input sou
 * **Accessibility**: Required for the low-level HID event tap to intercept physical keyboard media keys.
   * Open **System Settings > Privacy & Security > Accessibility**.
   * Ensure **PsychAudio** is toggled **ON**.
-* **Automation**: Required for AppleScript to control Apple Music playback.
-  * When PsychAudio first routes a command to Apple Music, macOS will display an authorization prompt. Click **Allow** (or verify under **System Settings > Privacy & Security > Automation > PsychAudio > Music**).
+* **Automation**: Required for AppleScript to control playback in media applications.
+  * When PsychAudio first routes a command to an application (Music, Spotify, VLC, or IINA), macOS will display an authorization prompt. Click **Allow** (or verify under **System Settings > Privacy & Security > Automation > PsychAudio**).
 
 ### 3. Install the Chrome Extension
 

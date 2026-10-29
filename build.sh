@@ -11,7 +11,7 @@ MACOS_DIR="${CONTENTS_DIR}/MacOS"
 RESOURCES_DIR="${CONTENTS_DIR}/Resources"
 SRC_DIR="${SCRIPT_DIR}/src"
 EXECUTABLE_NAME="PsychAudio"
-VERSION="1.1.0"
+VERSION="1.2.0"
 
 echo "=== Building ${APP_NAME} v${VERSION} for macOS ==="
 
@@ -28,10 +28,7 @@ swiftc \
     -framework Network \
     -framework ServiceManagement \
     -framework ApplicationServices \
-    -framework AVFoundation \
-    -framework MediaPlayer \
     "${SRC_DIR}/MediaKeyInterceptor.swift" \
-    "${SRC_DIR}/RemoteMediaController.swift" \
     "${SRC_DIR}/WebSocketServer.swift" \
     "${SRC_DIR}/AudioArbitrator.swift" \
     "${SRC_DIR}/AppDelegate.swift" \
